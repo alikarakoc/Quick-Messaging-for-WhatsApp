@@ -28,8 +28,9 @@ Quick Messaging for WhatsApp does not store personal data and only performs user
 
 ## Screenshots
 
-![Screenshot 1](screenshot1.png)
-![Screenshot 2](screenshot2.png)
+![image](https://github.com/alikarakoc/Quick-Messaging-for-WhatsApp/assets/16520480/f37f8cb6-0688-42fd-8d92-2c5bd203706a)
+
+ 
 
 ## Contributing
 
