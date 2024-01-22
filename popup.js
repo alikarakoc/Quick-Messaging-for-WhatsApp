@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
           lastNumber = num;
         } else {
           input.classList.add("error");
-          errorMsg.innerHTML = "Geçersiz telefon numarası.";
+          errorMsg.innerHTML = "Invalid phone number.";
           errorMsg.classList.remove("d-none");
           document
             .querySelector("#btnSend")
@@ -153,7 +153,7 @@ function handler() {
       iti.destroy();
       document.getElementById("error").classList.remove("d-none");
       document.getElementById("error").innerHTML =
-        "Telefon numarası boş geçilemez!";
+        "Phone number cannot be left empty!";
       phoneNumberInput.focus();
       return;
     }
