@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "version": "1.0",
-  "name": "WhatsApp İle Direkt Mesaj",
-  "description": "WhatsApp üzerinden rehberinize numara kayıt etmeden direkt mesaj gönderimi sağlar.",
+  "name": "Quick Messaging for WhatsApp",
+  "description": "Quick Messaging for WhatsApp streamlines communication, simplifying WhatsApp Web interactions and keeping your contacts clutter-free",
   "icons": {
     "16": "/icons/icon_16.png",
     "48": "/icons/icon_48.png",
@@ -17,9 +17,6 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-    "scripting",
-    "clipboardRead",
-    "storage",
     "tabs",
     "activeTab"
   ],
