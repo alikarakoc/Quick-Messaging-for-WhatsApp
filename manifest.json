@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "version": "1.0",
+  "name": "WhatsApp İle Direkt Mesaj",
+  "description": "WhatsApp üzerinden rehberinize numara kayıt etmeden direkt mesaj gönderimi sağlar.",
+  "icons": {
+    "16": "/icons/icon_16.png",
+    "48": "/icons/icon_48.png",
+    "128": "/icons/icon_128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' https://ipinfo.io; "
+  },
+  "author": "Ali Karakoç",
+  "action": {
+    "default_icon": "/images/hello.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "scripting",
+    "clipboardRead",
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "css": [
+        "/css/style.css",
+        "/css/intlTelInput.min.css"
+      ],
+      "js": [
+        "/scripts/jquery/jquery-3.6.0.min.js",
+        "/scripts/intlTelInput.min.js",
+        "popup.js"
+      ]
+    }
+  ]
+}

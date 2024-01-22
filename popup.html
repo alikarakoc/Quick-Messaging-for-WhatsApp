@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Whatsapp İle Direkt Mesaj</title>
+    <meta
+      name="description"
+      content="Rehberinizi doldurmadan direkt olarak mesaj gönderebilirsiniz!"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/intlTelInput.min.css" />
+  </head>
+  <body class="wp-helpers body">
+    <div style="width: 400px; height: 350px">
+      <div class="wp-helpers alert alert-success">
+        Whatsapp İle Direkt Mesaj Gönderebilirsiniz!
+      </div>
+      <label class="wp-helpers d-block">Telefon Numarası</label>
+      <input
+        type="tel"
+        class="wp-helpers form-control outline-none"
+        style="width: 140%"
+        id="ePhoneNumber"
+      />
+      <div id="valid-msg" class="wp-helpers d-none text-success">
+        ✓ Doğru telefon numarası
+      </div>
+      <div id="error-msg" class="wp-helpers d-none text-danger"></div>
+
+      <label
+        class="wp-helpers form-check-label d-block mt-2 mb-2"
+        for="cbMessageStatus"
+      >
+        <input
+          class="wp-helpers d-block form-check-input"
+          type="checkbox"
+          id="cbMessageStatus"
+        />
+        Mesaj yazmak istiyorum.
+      </label>
+      <div class="wp-helpers form-group d-none" id="divMessage">
+        <label for="labelPhoneNumber" class="wp-helpers d-block"
+          >Mesajınız</label
+        >
+        <textarea
+          class="wp-helpers form-control w-100 p-0 m-0"
+          id="eMessage"
+          style="height: 70px"
+        ></textarea>
+      </div>
+      <button
+        id="btnSend"
+        class="wp-helpers btn btn-success mt-2 mb-2 w-100 d-block mx-auto"
+        disabled
+      >
+        Gönder
+      </button>
+      <div style="position: fixed; bottom: 10px; width: 100%">
+        <p class="lead">
+          Kişiyi rehberinize kaydetmeden direkt olarak mesaj gönderin!
+        </p>
+        <hr class="wp-helpers w-auto" />
+        <a
+          class="wp-helpers w-auto mt-2 mb-2 mx-auto"
+          target="_blank"
+          href="https://www.linkedin.com/in/alikarakoc/"
+          >Author</a
+        >
+        |
+        <a
+          class="wp-helpers w-auto mt-2 mb-2 mx-auto"
+          target="_blank"
+          href="https://github.com/bykrkc/"
+          >Github</a
+        >
+      </div>
+    </div>
+    <script src="/scripts/jquery/jquery-3.6.0.min.js"></script>
+    <script src="/scripts/intlTelInput.min.js"></script>
+    <script src="/scripts/libphonenumber-max.js"></script>
+    <script src="/main.js"></script>
+    <script src="/popup.js"></script>
+  </body>
+</html>
