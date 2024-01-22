@@ -1,6 +1,6 @@
 # Quick Messaging for WhatsApp
 
-![DirectChat Logo](directchat-logo.png)
+![image](https://github.com/alikarakoc/Quick-Messaging-for-WhatsApp/assets/16520480/08f5b042-34fa-4364-949b-5287dfa37464)
 
 Quick Messaging for WhatsApp is a Chrome extension that streamlines your messaging experience on WhatsApp Web. Send messages instantly without cluttering your contacts or saving numbers in your phonebook.
 
