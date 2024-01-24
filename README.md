@@ -20,7 +20,7 @@ Quick Messaging for WhatsApp is a Chrome extension that streamlines your messagi
 
 ## Installation
 
-You can install Quick Messaging for WhatsApp from the [Chrome Web Store]([link-to-chrome-web-store](https://chromewebstore.google.com/detail/quick-messaging-for-whats/pekcjcliklplmbpgceijjfpeoceblcpk?hl=en)).
+You can install Quick Messaging for WhatsApp from the [Chrome Web Store](https://chromewebstore.google.com/detail/quick-messaging-for-whats/pekcjcliklplmbpgceijjfpeoceblcpk?hl=en).
 
 ## Note
 
