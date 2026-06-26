@@ -1,199 +1,143 @@
-let baseUrl = "https://web.whatsapp.com/";
-let sendUrl = "https://web.whatsapp.com/send?phone=";
-let lastNumber = "";
-const loaderShown = "my-interval";
-window.isInitialized = false;
-window.isLoaded = loaderShown;
-function checkIsLoaded() {
-  const loaderShown = document.querySelector(".ZJWuG") !== null;
-  if (loaderShown && !isInitialized) {
-    isInitialized = true;
-  }
-  if (!loaderShown && isInitialized) {
-    clearInterval(window.isWpLoaded);
-    setTimeout(() => {
-      document.querySelector("button.epia9gcq")?.click();
-    }, 500);
-  }
-}
-window.isWpLoaded = setInterval(function () {
-  checkIsLoaded();
-}, 200);
+const WA_BASE = 'https://web.whatsapp.com/';
+const WA_SEND = 'https://web.whatsapp.com/send?phone=';
 
-document.addEventListener("DOMContentLoaded", function () {
-  try {
-    var input = document.querySelector("#ePhoneNumber"),
-      errorMsg = document.querySelector("#error-msg"),
-      validMsg = document.querySelector("#valid-msg");
+let validatedNumber = '';
+let pendingImage = null; // { dataUrl: string, type: string }
 
-    var iti = window.intlTelInput(input, {
-      initialCountry: "auto",
-      separateDialCode: true,
-      allowExtensions: true,
-      autoFormat: false,
-      autoHideDialCode: true,
-      autoPlaceholder: "polite",
-      defaultCountry: "auto",
-      ipinfoToken: "yolo",
-      nationalMode: true,
-      numberType: "MOBILE",
-      utilsScript: "/scripts/utils.js?1613236686837",
-      preventInvalidNumbers: true,
-      geoIpLookup: function (success, failure) {
-        try {
-          $.get("https://ipapi.co/json/", function () { }, "json").always(function (
-            resp
-          ) {
-            var countryCode = resp && resp.country ? resp.country : "tr";
-            success(countryCode);
-          });
-        } catch { }
-      },
-    });
+document.addEventListener('DOMContentLoaded', () => {
+  const phoneInput = document.getElementById('ePhoneNumber');
+  const validMsg   = document.getElementById('valid-msg');
+  const errorMsg   = document.getElementById('error-msg');
+  const sendBtn    = document.getElementById('btnSend');
 
-    var reset = function () {
-      errorMsg.innerHTML = "";
-      errorMsg.classList.add("d-none");
-      validMsg.classList.add("d-none");
+  // --- Phone input ---
+  const iti = window.intlTelInput(phoneInput, {
+    initialCountry:   'auto',
+    separateDialCode: true,
+    autoPlaceholder:  'polite',
+    nationalMode:     true,
+    numberType:       'MOBILE',
+    utilsScript:      chrome.runtime.getURL('/scripts/utils.js'),
+    geoIpLookup(success) {
+      // Check localStorage cache first (valid for 7 days) — avoids a network
+      // round-trip on every popup open.
+      const cached = localStorage.getItem('qmwa_country');
+      const cachedAt = Number(localStorage.getItem('qmwa_country_ts') || 0);
+      if (cached && Date.now() - cachedAt < 7 * 24 * 3600 * 1000) {
+        success(cached);
+        return;
+      }
+      fetch('https://ipapi.co/json/')
+        .then(r => r.json())
+        .then(data => {
+          const country = data?.country || 'TR';
+          localStorage.setItem('qmwa_country', country);
+          localStorage.setItem('qmwa_country_ts', String(Date.now()));
+          success(country);
+        })
+        .catch(() => success('TR'));
+    },
+  });
+
+  function showValid()      { validMsg.classList.remove('hidden'); errorMsg.classList.add('hidden'); errorMsg.textContent = ''; }
+  function showError(msg)   { errorMsg.textContent = msg; errorMsg.classList.remove('hidden'); validMsg.classList.add('hidden'); }
+  function clearHints()     { validMsg.classList.add('hidden'); errorMsg.classList.add('hidden'); errorMsg.textContent = ''; }
+
+  phoneInput.addEventListener('input', () => {
+    clearHints();
+    if (!phoneInput.value.trim()) { sendBtn.disabled = true; validatedNumber = ''; return; }
+    if (iti.isValidNumber()) {
+      validatedNumber = iti.getNumber();
+      sendBtn.disabled = false;
+      showValid();
+    } else {
+      validatedNumber = '';
+      sendBtn.disabled = true;
+      showError('Invalid phone number.');
+    }
+  });
+
+  phoneInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !sendBtn.disabled) { e.preventDefault(); sendBtn.click(); }
+  });
+
+  // --- Message section toggle ---
+  document.getElementById('cbMessageStatus').addEventListener('change', e => {
+    const div = document.getElementById('divMessage');
+    if (e.target.checked) {
+      div.classList.remove('hidden');
+    } else {
+      div.classList.add('hidden');
+      document.getElementById('eMessage').value = '';
+      clearPendingImage();
+    }
+  });
+
+  // --- Image paste ---
+  document.addEventListener('paste', (e) => {
+    if (document.getElementById('divMessage').classList.contains('hidden')) return;
+
+    const imageItem = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
+    if (!imageItem) return;
+
+    e.preventDefault();
+    const file = imageItem.getAsFile();
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      pendingImage = { dataUrl: reader.result, type: file.type };
+      showImagePreview(reader.result);
     };
-    input.addEventListener("keyup", function (event) {
-      reset();
-      if (input.value.trim()) {
-        if (iti.isValidNumber()) {
-          validMsg.classList.remove("d-none");
-          document.querySelector("#btnSend").removeAttribute("disabled");
-          var num = iti.getNumber();
-          lastNumber = num;
-        } else {
-          input.classList.add("error");
-          errorMsg.innerHTML = "Invalid phone number.";
-          errorMsg.classList.remove("d-none");
-          document
-            .querySelector("#btnSend")
-            .setAttribute("disabled", "disabled");
-          lastNumber = "";
-        }
-      } else {
-        document.querySelector("#btnSend").setAttribute("disabled", "disabled");
-      }
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        document.getElementById("btnSend").click();
-      }
-    });
+    reader.readAsDataURL(file);
+  });
 
-    document.getElementById("btnSend").addEventListener("click", handler);
-    document
-      .getElementById("cbMessageStatus")
-      .addEventListener("click", checkMessage);
-  } catch (error) { }
+  document.getElementById('clearImage').addEventListener('click', clearPendingImage);
+
+  // --- Send ---
+  sendBtn.addEventListener('click', handleSend);
 });
 
-function checkMessage() {
-  var checkBox = document.getElementById("cbMessageStatus");
-  if (checkBox.checked == true) {
-    document.getElementById("divMessage").classList.remove("d-none");
-  } else {
-    document.getElementById("divMessage").classList.add("d-none");
-    document.getElementById("eMessage").value = "";
-  }
+function showImagePreview(dataUrl) {
+  document.getElementById('imagePlaceholder').classList.add('hidden');
+  document.getElementById('previewImg').src = dataUrl;
+  document.getElementById('imagePreview').classList.remove('hidden');
 }
 
-const detectWhatsapp = (phone, text) => {
-  const uri = `whatsapp://send/?phone=${encodeURIComponent(
-    phone
-  )}&text=${encodeURIComponent(text)}`;
+function clearPendingImage() {
+  pendingImage = null;
+  document.getElementById('imagePlaceholder').classList.remove('hidden');
+  document.getElementById('imagePreview').classList.add('hidden');
+  document.getElementById('previewImg').src = '';
+}
 
-  const onIE = () => {
-    return new Promise((resolve) => {
-      window.navigator.msLaunchUri(
-        uri,
-        () => resolve(true),
-        () => resolve(false)
-      );
-    });
-  };
+async function handleSend() {
+  if (!validatedNumber) return;
 
-  const notOnIE = () => {
-    return new Promise((resolve) => {
-      const a =
-        document.getElementById("wapp-launcher") || document.createElement("a");
-      a.id = "wapp-launcher";
-      a.href = uri;
-      a.style.display = "none";
-      document.body.appendChild(a);
+  const message  = document.getElementById('eMessage').value;
+  const autoSend = document.getElementById('cbAutoSend').checked;
+  let url;
 
-      const start = Date.now();
-      const timeoutToken = setTimeout(() => {
-        if (Date.now() - start > 1250) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      }, 1000);
+  if (pendingImage) {
+    // The image is still in the user's clipboard (from their Cmd+V).
+    // Pass the caption via URL — WhatsApp ignores unknown params.
+    const captionParam = message ? `&caption=${encodeURIComponent(message)}` : '';
+    url = `${WA_SEND}${encodeURIComponent(validatedNumber)}&app_absent=0&has_image=1${autoSend ? '&auto_send=1' : ''}${captionParam}`;
+  } else {
+    url = `${WA_SEND}${encodeURIComponent(validatedNumber)}&text=${encodeURIComponent(message)}&app_absent=0${autoSend ? '&auto_send=1' : ''}`;
+  }
 
-      const handleBlur = () => {
-        clearTimeout(timeoutToken);
-        resolve(true);
-      };
-      window.addEventListener("blur", handleBlur);
-
-      a.click();
-    });
-  };
-
-  return window.navigator.msLaunchUri ? onIE() : notOnIE();
-};
-
-function handler() {
-  var phoneNumberInput = document.querySelector("#ePhoneNumber");
   try {
-    var iti = intlTelInput(phoneNumberInput);
-    if (phoneNumberInput.value.length === 0) {
-      iti.destroy();
-      document.getElementById("error").classList.remove("d-none");
-      document.getElementById("error").innerHTML =
-        "Phone number cannot be left empty!";
-      phoneNumberInput.focus();
-      return;
+    const tabs = await chrome.tabs.query({});
+    const existing = tabs.find(t => t.url?.startsWith(WA_BASE));
+    if (existing) {
+      await chrome.tabs.update(existing.id, { url, active: true });
+    } else {
+      await chrome.tabs.create({ url, active: true });
     }
-  } catch (error) { }
-  chrome.tabs.query({ active: true, currentWindow: true })
-    .then((tabs) => {
-      return new Promise((resolve) => {
-        chrome.tabs.query({}, resolve);
-      });
-    })
-    .then((tabs) => {
-      const openedWhatsapp = tabs.filter((filter) => filter.url === baseUrl);
-      if (openedWhatsapp.length > 0) {
-        const tabId = openedWhatsapp[0].id;
-        chrome.tabs.get(tabId)
-          .then((tab) => {
-            chrome.tabs.update(tabId, {
-              url: `${sendUrl + encodeURIComponent(lastNumber)
-                }}&text=${encodeURIComponent(
-                  document.getElementById("eMessage").value
-                )}&app_absent=0`,
-              active: true
-            });
-            window.close();
-          });
-      } else {
-        chrome.tabs.create({
-          url: `${sendUrl + encodeURIComponent(lastNumber)
-            }&text=${encodeURIComponent(
-              document.getElementById("eMessage").value
-            )}&app_absent=0`,
-          active: true,
-        })
-          .then(() => {
-            window.close();
-          });
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  return;
+  } catch (err) {
+    console.error('[Quick Messaging] Failed to open WhatsApp tab:', err);
+  }
+
+  window.close();
 }

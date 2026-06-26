@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
-  "version": "1.0",
+  "version": "1.1",
   "name": "Quick Messaging for WhatsApp",
-  "description": "Quick Messaging for WhatsApp streamlines communication, simplifying WhatsApp Web interactions and keeping your contacts clutter-free",
+  "description": "Send WhatsApp messages to any number instantly — no need to save contacts.",
   "icons": {
     "16": "/icons/icon_16.png",
     "48": "/icons/icon_48.png",
     "128": "/icons/icon_128.png"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' https://ipinfo.io; "
+    "extension_pages": "script-src 'self'; object-src 'self';"
   },
   "author": "Ali Karakoç",
   "action": {
@@ -18,29 +18,17 @@
   },
   "permissions": [
     "tabs",
-    "activeTab"
+    "clipboardRead"
   ],
   "host_permissions": [
-    "https://web.whatsapp.com/*"
-  ],
-  "optional_host_permissions": [
-    "*://*/*"
+    "https://web.whatsapp.com/*",
+    "https://ipapi.co/*"
   ],
   "content_scripts": [
     {
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
-      "css": [
-        "/css/style.css",
-        "/css/intlTelInput.min.css"
-      ],
-      "js": [
-        "/scripts/jquery/jquery-3.6.0.min.js",
-        "/scripts/intlTelInput.min.js",
-        "popup.js"
-      ]
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ]
 }

@@ -1,82 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Quick Messaging for WhatsApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="/css/style.css" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Quick Messaging for WhatsApp</title>
     <link rel="stylesheet" href="/css/intlTelInput.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
-  <body class="wp-helpers body">
-    <div style="width: 400px; height: auto;">
-      <div class="wp-helpers alert alert-success">
-        You can send direct messages with Quick Messaging for WhatsApp!
-      </div>
-      <label class="wp-helpers d-block">Phone number</label>
-      <input
-        type="tel"
-        class="wp-helpers form-control outline-none"
-        style="width: 140%"
-        id="ePhoneNumber"
-      />
-      <div id="valid-msg" class="wp-helpers d-none text-success">
-        ✓ Correct phone number
-      </div>
-      <div id="error-msg" class="wp-helpers d-none text-danger"></div>
+  <body>
+    <div class="popup">
 
-      <label
-        class="wp-helpers form-check-label d-block mt-2 mb-2"
-        for="cbMessageStatus"
-      >
-        <input
-          class="wp-helpers d-block form-check-input"
-          type="checkbox"
-          id="cbMessageStatus"
-        />
-        I want to write a message.
-      </label>
-      <div class="wp-helpers form-group d-none" id="divMessage">
-        <label for="labelPhoneNumber" class="wp-helpers d-block"
-          >Your message</label
-        >
-        <textarea
-          class="wp-helpers form-control w-100 p-0 m-0"
-          id="eMessage"
-          style="height: 70px"
-        ></textarea>
-      </div>
-      <button
-        id="btnSend"
-        class="wp-helpers btn btn-success mt-2 mb-3 w-100 d-block mx-auto"
-        disabled
-      >
-        Send
-      </button>
-      <div style="">
-        <p class="lead">
-          Send a message directly to the person without saving them in their contact list!
-        </p>
-        <hr class="wp-helpers w-auto" />
-        <a
-          class="wp-helpers w-auto mt-2 mb-2 mx-auto"
-          target="_blank"
-          href="https://www.linkedin.com/in/alikarakoc/"
-          >Author</a
-        >
-        |
-        <a
-          class="wp-helpers w-auto mt-2 mb-2 mx-auto"
-          target="_blank"
-          href="https://github.com/alikarakoc/Quick-Messaging-for-WhatsApp"
-          >Github</a
-        >
-      </div>
+      <header class="popup-header">
+        <img src="/images/hello.png" alt="" class="popup-logo" aria-hidden="true" />
+        <div class="popup-header-text">
+          <h1 class="popup-title">Quick Message</h1>
+          <p class="popup-subtitle">Send without saving contacts</p>
+        </div>
+      </header>
+
+      <main class="popup-body">
+
+        <div class="field">
+          <label class="field-label" for="ePhoneNumber">Phone number</label>
+          <input
+            type="tel"
+            id="ePhoneNumber"
+            class="field-input"
+            autocomplete="tel"
+          />
+          <span id="valid-msg" class="field-hint field-hint--success hidden">
+            ✓ Valid number
+          </span>
+          <span id="error-msg" class="field-hint field-hint--error hidden"></span>
+        </div>
+
+        <label class="toggle-row" for="cbMessageStatus">
+          <input
+            type="checkbox"
+            id="cbMessageStatus"
+            class="toggle-checkbox"
+          />
+          <span class="toggle-label">Include a message</span>
+        </label>
+
+        <div class="field hidden" id="divMessage">
+
+          <div id="imageZone" class="image-zone">
+            <div id="imagePlaceholder" class="image-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="m21 15-5-5L5 21"/>
+              </svg>
+              <span>Paste image (⌘V / Ctrl+V)</span>
+            </div>
+            <div id="imagePreview" class="image-preview hidden">
+              <img id="previewImg" alt="Image preview" />
+              <button id="clearImage" class="clear-image" type="button" title="Remove image">×</button>
+            </div>
+          </div>
+
+          <label class="field-label" for="eMessage">Caption (optional)</label>
+          <textarea
+            id="eMessage"
+            class="field-input field-textarea"
+            placeholder="Type a caption..."
+          ></textarea>
+
+          <label class="toggle-row toggle-row--sub" for="cbAutoSend">
+            <input
+              type="checkbox"
+              id="cbAutoSend"
+              class="toggle-checkbox"
+            />
+            <span class="toggle-label">Send automatically</span>
+          </label>
+        </div>
+
+        <button id="btnSend" class="btn-send" disabled>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+          Send
+        </button>
+
+      </main>
+
+      <footer class="popup-footer">
+        <p class="footer-note">No data is stored. Messages are sent via WhatsApp Web.</p>
+        <div class="footer-links">
+          <a href="https://github.com/alikarakoc/Quick-Messaging-for-WhatsApp" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <span class="footer-sep" aria-hidden="true">·</span>
+          <a href="https://www.linkedin.com/in/alikarakoc/" target="_blank" rel="noopener noreferrer">Author</a>
+        </div>
+      </footer>
+
     </div>
-    <script src="/scripts/jquery/jquery-3.6.0.min.js"></script>
+
     <script src="/scripts/intlTelInput.min.js"></script>
     <script src="/scripts/libphonenumber-max.js"></script>
-    <script src="/main.js"></script>
     <script src="/popup.js"></script>
   </body>
 </html>
