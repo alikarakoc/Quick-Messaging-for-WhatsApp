@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "version": "1.1",
-  "name": "Quick Messaging for WhatsApp",
-  "description": "Send WhatsApp messages to any number instantly — no need to save contacts.",
+  "version": "1.2",
+  "name": "__MSG_extName__",
+  "description": "__MSG_appDesc__",
+  "default_locale": "en",
   "icons": {
     "16": "/icons/icon_16.png",
     "48": "/icons/icon_48.png",
@@ -13,12 +14,21 @@
   },
   "author": "Ali Karakoç",
   "action": {
-    "default_icon": "/images/hello.png",
+    "default_icon": {
+      "16": "/icons/icon_16.png",
+      "48": "/icons/icon_48.png",
+      "128": "/icons/icon_128.png"
+    },
     "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
   },
   "permissions": [
     "tabs",
-    "clipboardRead"
+    "storage",
+    "clipboardRead",
+    "contextMenus"
   ],
   "host_permissions": [
     "https://web.whatsapp.com/*",

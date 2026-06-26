@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
-    <title>Quick Messaging for WhatsApp</title>
+    <title data-i18n="extName">Quick Messaging for WhatsApp</title>
     <link rel="stylesheet" href="/css/intlTelInput.min.css" />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
@@ -14,38 +14,84 @@
       <header class="popup-header">
         <img src="/images/hello.png" alt="" class="popup-logo" aria-hidden="true" />
         <div class="popup-header-text">
-          <h1 class="popup-title">Quick Message</h1>
-          <p class="popup-subtitle">Send without saving contacts</p>
+          <h1 class="popup-title" data-i18n="popupTitle">Quick Message</h1>
+          <p class="popup-subtitle" data-i18n="subtitle">Send without saving contacts</p>
         </div>
       </header>
 
       <main class="popup-body">
 
+        <!-- ① Phone number (required) -->
         <div class="field">
-          <label class="field-label" for="ePhoneNumber">Phone number</label>
+          <label class="field-label" for="ePhoneNumber" data-i18n="phoneLabel">Phone number</label>
           <input
             type="tel"
             id="ePhoneNumber"
             class="field-input"
             autocomplete="tel"
           />
-          <span id="valid-msg" class="field-hint field-hint--success hidden">
-            ✓ Valid number
-          </span>
+          <span id="valid-msg" class="field-hint field-hint--success hidden" data-i18n="validNumber">✓ Valid number</span>
           <span id="error-msg" class="field-hint field-hint--error hidden"></span>
         </div>
 
-        <label class="toggle-row" for="cbMessageStatus">
-          <input
-            type="checkbox"
-            id="cbMessageStatus"
-            class="toggle-checkbox"
-          />
-          <span class="toggle-label">Include a message</span>
-        </label>
+        <!-- Recent numbers (shown below phone when history exists) -->
+        <div id="recentStrip" class="recent-inline hidden">
+          <span class="recent-title">Recent</span>
+          <div id="recentChips" class="recent-chips"></div>
+        </div>
 
-        <div class="field hidden" id="divMessage">
+        <!-- Note: subtle optional field, no label clutter -->
+        <input
+          type="text"
+          id="eLabel"
+          class="field-input field-input--note"
+          data-i18n-ph="notePlaceholder"
+          placeholder="Note (optional) — e.g. John Smith, Manager"
+          autocomplete="off"
+        />
 
+        <!-- ② Add message — clear expand action -->
+        <button id="btnToggleMessage" class="expand-btn" type="button">
+          <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span id="expandLabel" data-i18n="addMessage">Add a message</span>
+          <span class="expand-opt" data-i18n="optional">optional</span>
+        </button>
+
+        <!-- Message section (hidden until expand button clicked) -->
+        <div id="divMessage" class="hidden">
+
+          <!-- Template picker (dropdown, not a select) -->
+          <div class="template-picker">
+            <button id="btnTemplates" class="template-trigger" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              <span data-i18n="templates">Templates</span>
+              <svg class="chevron" viewBox="0 0 10 6" fill="currentColor" width="10" height="6" aria-hidden="true">
+                <path d="M0 0l5 6 5-6z"/>
+              </svg>
+            </button>
+
+            <div id="templateDropdown" class="template-dropdown hidden">
+              <div id="templateList" class="template-list">
+                <p class="template-empty" data-i18n="noTemplates">No templates saved yet.</p>
+              </div>
+              <div class="template-dropdown-footer">
+                <button id="btnSaveTemplate" class="template-save-btn" type="button" data-i18n="saveTemplate">+ Save current message as template</button>
+              </div>
+            </div>
+
+            <div id="saveTemplateForm" class="save-template-form hidden">
+              <input type="text" id="eTemplateName" class="field-input field-input--sm" data-i18n-ph="templateNamePh" placeholder="Template name..." autocomplete="off" />
+              <button id="btnConfirmSave" class="template-btn template-btn--confirm" type="button">✓</button>
+              <button id="btnCancelSave" class="template-btn" type="button">✕</button>
+            </div>
+          </div>
+
+          <!-- Image paste zone -->
           <div id="imageZone" class="image-zone">
             <div id="imagePlaceholder" class="image-placeholder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -53,7 +99,7 @@
                 <circle cx="8.5" cy="8.5" r="1.5"/>
                 <path d="m21 15-5-5L5 21"/>
               </svg>
-              <span>Paste image (⌘V / Ctrl+V)</span>
+              <span data-i18n="imagePlaceholder">Paste image here (⌘V / Ctrl+V)</span>
             </div>
             <div id="imagePreview" class="image-preview hidden">
               <img id="previewImg" alt="Image preview" />
@@ -61,38 +107,41 @@
             </div>
           </div>
 
-          <label class="field-label" for="eMessage">Caption (optional)</label>
-          <textarea
-            id="eMessage"
-            class="field-input field-textarea"
-            placeholder="Type a caption..."
-          ></textarea>
+          <!-- Message textarea -->
+          <div class="textarea-wrap">
+            <textarea
+              id="eMessage"
+              class="field-input field-textarea"
+              data-i18n-ph="messagePlaceholder"
+              placeholder="Type your message..."
+            ></textarea>
+            <span id="charCount" class="char-count">0</span>
+          </div>
 
-          <label class="toggle-row toggle-row--sub" for="cbAutoSend">
-            <input
-              type="checkbox"
-              id="cbAutoSend"
-              class="toggle-checkbox"
-            />
-            <span class="toggle-label">Send automatically</span>
+          <!-- Auto-send -->
+          <label class="toggle-row" for="cbAutoSend">
+            <input type="checkbox" id="cbAutoSend" class="toggle-checkbox" />
+            <span class="toggle-label" data-i18n="sendAuto">Send automatically</span>
           </label>
+
         </div>
 
+        <!-- ③ Send -->
         <button id="btnSend" class="btn-send" disabled>
           <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
           </svg>
-          Send
+          <span data-i18n="send">Send</span>
         </button>
 
       </main>
 
       <footer class="popup-footer">
-        <p class="footer-note">No data is stored. Messages are sent via WhatsApp Web.</p>
+        <p class="footer-note" data-i18n="footerNote">Everything stays on your device. No data is shared externally.</p>
         <div class="footer-links">
           <a href="https://github.com/alikarakoc/Quick-Messaging-for-WhatsApp" target="_blank" rel="noopener noreferrer">GitHub</a>
           <span class="footer-sep" aria-hidden="true">·</span>
-          <a href="https://www.linkedin.com/in/alikarakoc/" target="_blank" rel="noopener noreferrer">Author</a>
+          <a href="https://www.linkedin.com/in/alikarakoc/" target="_blank" rel="noopener noreferrer" data-i18n="author">Author</a>
         </div>
       </footer>
 
